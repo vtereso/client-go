@@ -488,7 +488,7 @@ func filterByNamespaceAndName(objs []runtime.Object, ns, name string) ([]runtime
 // Only metadata.name/metadata.namespace are available field.Selector for all CRD:
 // https://kubernetes.io/docs/concepts/overview/working-with-objects/field-selectors/
 // Namespace is checked independent of the field.Selector, in case not provided
-func filterList(objs []runtime.Object, ns, listRestrictions ListRestrictions) ([]runtime.Object, error) {
+func filterList(objs []runtime.Object, ns string, lr ListRestrictions) ([]runtime.Object, error) {
 	var res []runtime.Object
 
 	for _, obj := range objs {
@@ -499,7 +499,7 @@ func filterList(objs []runtime.Object, ns, listRestrictions ListRestrictions) ([
 		if ns != "" && acc.GetNamespace() != ns {
 			continue
 		}
-		if !lr.Labels.Empty() && lr.Labels.Match(labels.Set(acc.GetLabels())) {
+		if !lr.Labels.Empty() && lr.Labels.Matches(labels.Set(acc.GetLabels())) {
 			continue
 		}
 		if name, found := lr.Fields.RequiresExactMatch("metadata.name");found {
